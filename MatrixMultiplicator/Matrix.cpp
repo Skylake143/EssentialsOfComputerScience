@@ -1,7 +1,11 @@
 #include "Matrix.h"
 #include <iostream>
+#include <stdexcept>
+#include <chrono>
+#include "pthread.h"
 
 using namespace std;
+using namespace std::chrono;
 // struct Matrix{
 //     uint32_t dimX = 0;
 //     uint32_t dimY = 0;
@@ -23,13 +27,25 @@ using namespace std;
 //     }
 // };
 
+bool PRINT_MATRICES=false;
+
 //Constructor
 Matrix::Matrix()
 {
 }
+
+//Constructor creating 
+Matrix::Matrix(uint32_t dimX, uint32_t dimY)
+{
+    createRandomMatrix(dimX,dimY);
+}
+
 Matrix::~Matrix()
 {
 }
+
+
+
 
 //Print matrix 
 void Matrix::printMatrix()
@@ -45,86 +61,210 @@ void Matrix::printMatrix()
     } 
 }
 
-//Matrix-Multiplication Method single threaded
-Matrix Matrix::matrixmultiplicationSingleThreaded(Matrix matrixB)
+void Matrix::createRandomMatrix(uint32_t dimX, uint32_t dimY)
 {
+    this->dimX = dimX;
+    this->dimY = dimY;
+    this->matrix = new int32_t*[dimY];
+    
+    for(size_t i = 0; i<dimY; i++)
+    {
+        matrix[i]=new int32_t[dimX];
+        for(size_t j = 0; j<dimX; j++)
+        {
+            matrix[i][j]=std::rand() %10;
+            //matrix[i][j]=i*dimX+j+1;
+        }
+    }
+}
+
+
+//Method filling matrix of given dimension successivly with 1,2,3...
+void Matrix::increasingFillMatrix(uint32_t dimX, uint32_t dimY)
+{
+    this->dimX = dimX;
+    this->dimY = dimY;
+    this->matrix = new int32_t*[dimY];
+    
+    for(size_t i = 0; i<dimY; i++)
+    {
+        matrix[i]=new int32_t[dimX];
+        for(size_t j = 0; j<dimX; j++)
+        {
+            matrix[i][j]=i*dimX+j+1;
+        }
+    }
+}
+
+
+//Matrix-Multiplication Method single threaded
+Matrix* Matrix::matrixmultiplicationSingleThreaded(Matrix matrixB)
+{   
+    try
+    {
+        if(this->dimX != matrixB.dimY)
+        {
+            cout << "X-Dimension of Matrix A must be equal to Y-Dimentsion of Matrix B" << endl;
+            return nullptr;
+            //TODO: does not work??
+            throw runtime_error("X-Dimension of Matrix A must be equal to Y-Dimentsion of Matrix B");
+        }
+        //Define new output Matrix
+        Matrix output;
+        output.dimX = matrixB.dimX;
+        output.dimY = dimY;
+        output.matrix = new int32_t * [output.dimY];
+
+        //Iteration through lines of new matrix
+        for(size_t y=0;y<output.dimY;++y)
+        {
+            output.matrix[y] = new int32_t[output.dimX];
+            //Iteration through columns of new matrix
+            for(size_t matX=0; matX<output.dimX;++matX)
+            {
+                //calculating Matrix result
+                int32_t result = 0;
+                //Iterating again through x to calculate 
+                for(size_t x=0; x<dimX;x++)
+                {
+                    int32_t test1 = matrix[y][x];
+                    int32_t test2 = matrixB.matrix[x][matX];
+                    int32_t multipliedValue=matrix[y][x]*matrixB.matrix[x][matX];
+                    result+=multipliedValue;
+                }
+            
+                output.matrix[y][matX] = result;
+            }
+        }
+        
+        return &output;
+    }
+
+    catch(runtime_error e)
+    {
+        cout << "Runtime error: " << e.what();
+    }
+    return nullptr;
+}
+
+struct thread_data{
+    Matrix* output;
+    int32_t** matrix;
+    Matrix* matrixB; 
+    size_t y;
+    uint32_t dimX;
+
+};
+
+void* threadMatrixCalculation(void *threadarg)
+{
+    struct thread_data *my_data;
+    my_data = (struct thread_data *) threadarg;
+    int32_t** matrix = my_data->matrix;
+    Matrix matrixB = *my_data->matrixB;
+    Matrix output = *my_data->output;
+    size_t y = my_data->y;
+    uint32_t dimX = my_data->dimX;
+
+    //Iteration through columns of new matrix
+    for(size_t matX=0; matX<output.dimX;++matX)
+    {
+        //calculating Matrix result
+        int32_t result = 0;
+        //Iterating again through x to calculate 
+        for(size_t x=0; x<dimX;x++)
+        {
+            int32_t test1 = matrix[y][x];
+            int32_t test2 = matrixB.matrix[x][matX];
+            int32_t multipliedValue=matrix[y][x]*matrixB.matrix[x][matX];
+            result+=multipliedValue;
+        }
+        output.matrix[y][matX] = result;
+    }
+}
+
+//Matrix-Multiplication Method single threaded
+Matrix* Matrix::matrixmultiplicationMultiThreaded(Matrix matrixB)
+{
+    if(this->dimX != matrixB.dimY)
+    {
+        cout << "X-Dimension of Matrix A must be equal to Y-Dimentsion of Matrix B" << endl;
+        return nullptr;
+    }
     //Define new output Matrix
     Matrix output;
     output.dimX = matrixB.dimX;
     output.dimY = dimY;
     output.matrix = new int32_t * [output.dimY];
 
+    pthread_t threadArr[output.dimY];
+    struct thread_data thread_data_array[output.dimY];
+
     //Iteration through lines of new matrix
     for(size_t y=0;y<output.dimY;++y)
     {
         output.matrix[y] = new int32_t[output.dimX];
-        //Iteration through columns of new matrix
-        for(size_t matX=0; matX<output.dimX;++matX)
-        {
-            //calculating Matrix result
-            int32_t result = 0;
-            //Iterating again through x to calculate 
-            for(size_t x=0; x<dimX;x++)
-            {
-                int32_t test1 = matrix[y][x];
-                int32_t test2 = matrixB.matrix[x][matX];
-                int32_t multipliedValue=matrix[y][x]*matrixB.matrix[x][matX];
-                result+=multipliedValue;
-            }
-        
-            output.matrix[y][matX] = result;
-        }
     }
-    return output;
+    //Iteration through lines of new matrix
+    for(size_t y=0;y<output.dimY;++y)
+    {
+        thread_data_array[y].matrixB = &matrixB;
+        thread_data_array[y].matrix = matrix;
+        thread_data_array[y].output = &output;
+        thread_data_array[y].y = y;
+        thread_data_array[y].dimX = dimX;
+
+        int rc = pthread_create(&threadArr[y], NULL,threadMatrixCalculation,(void *)&thread_data_array[y]);
+        //TODO: int rc
+    }
+    for(size_t y=0;y<output.dimY;++y)
+    {
+        pthread_join(threadArr[y], NULL);
+    }
+    //pthread_exit(NULL);
+    
+    return &output;
 }
 
-//Matrix-Multiplication Method single threaded
-Matrix Matrix::matrixmultiplicationMultiThreaded(Matrix matrixB)
-{
-
-}
-
-//TODO: make filling code a function and add it to constructor
 int main()
 {
     //Initialize matrixA
-    Matrix matrixA;
-    matrixA.dimX=3;
-    matrixA.dimY=2;
-    int32_t** array = new int32_t*[matrixA.dimY];
-    
-    for(size_t i = 0; i<matrixA.dimY; i++)
+    Matrix matrixA(1000,1000);
+    if(PRINT_MATRICES==true)
     {
-        array[i]=new int32_t[matrixA.dimX];
-        for(size_t j = 0; j<matrixA.dimX; j++)
-        {
-            array[i][j]=i*matrixA.dimX+j+1;
-        }
+        cout << "Matrix A: " << endl;
+        matrixA.printMatrix();
     }
-    matrixA.matrix = array;
-    cout << "Matrix A: " << endl;
-    matrixA.printMatrix();
     
     //Initialize matrix B
-    Matrix matrixB;
-    matrixB.dimX=4;
-    matrixB.dimY=3;
-    int32_t** array2 = new int32_t*[matrixB.dimY];
-    
-    for(size_t i = 0; i<matrixB.dimY; i++)
+    Matrix matrixB(1000,1000);
+    if(PRINT_MATRICES==true)
     {
-        array2[i]=new int32_t[matrixB.dimX];
-        for(size_t j = 0; j<matrixB.dimX; j++)
-        {   
-            array2[i][j]=(int32_t)i*matrixB.dimX+j+1;
-        }
+        cout << "Matrix B: " << endl;
+        matrixB.printMatrix();
     }
-    matrixB.matrix = array2;
-    cout << "Matrix B: " << endl;
-    matrixB.printMatrix();
 
-    Matrix output = matrixA.matrixmultiplicationSingleThreaded(matrixB);
-    cout << "Output Matrix: " << endl;
-    output.printMatrix();
+    auto startTime = chrono::high_resolution_clock::now();
+    Matrix output = *matrixA.matrixmultiplicationSingleThreaded(matrixB);
+    auto stopTime = chrono::high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(stopTime - startTime);
+    if(PRINT_MATRICES==true)
+    {
+        cout << "Matrix A times B: " << endl;
+        output.printMatrix();
+    }
+    cout << "Duration to perform single-threaded Matrix multiplication in ms: " << duration.count() << endl;
+
+    startTime = chrono::high_resolution_clock::now();
+    Matrix output2 = *matrixA.matrixmultiplicationMultiThreaded(matrixB);
+    stopTime = chrono::high_resolution_clock::now();
+    duration = duration_cast<milliseconds>(stopTime - startTime);
+    if(PRINT_MATRICES==true)
+    {
+        cout << "Matrix A times B: " << endl;
+        output2.printMatrix();
+    }
+    cout << "Duration to perform multi-threaded Matrix multiplication in ms: " << duration.count() << endl;
+
     return 0;
 }
