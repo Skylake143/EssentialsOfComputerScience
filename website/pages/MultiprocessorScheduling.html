@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CPU Virtualization</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+<body>
+<!-- Header -->
+<header class="w3-container w3-theme w3-padding" id="myHeader">
+    <i onclick="w3_open()" class="fa fa-bars w3-xlarge w3-button w3-theme"></i> 
+    <div class="w3-center">
+    <h4><a href="file:///Users/emmanouela/Desktop/website/index.html"> Essentials of Coumputing Systems</a></h4>
+    <h1 class="w3-xxxlarge w3-animate-bottom">CPU Virtualization</h1>
+      <div class="w3-padding-32">
+        <button class="w3-btn w3-xlarge w3-dark-grey w3-hover-light-grey" onclick="document.getElementById('id01').style.display='block'" style="font-weight:900;">GROUP INFO</button>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Modal -->
+  <div id="id01" class="w3-modal">
+      <div class="w3-modal-content w3-card-4 w3-animate-top">
+        <header class="w3-container w3-theme-l1"> 
+          <span onclick="document.getElementById('id01').style.display='none'"
+          class="w3-button w3-display-topright">×</span>
+          <h4>Welcome to our website</h4>
+          <h5>This is Group 39 and we aim to teach you a bit about the different aspects of CPU Virtualization</h5>
+        </header>
+        <div class="w3-padding">
+          <p>Team Members</p>
+          <ul>
+              <li>Emmanouela Stranomiti</li>
+              <li>Mariñe Hernaez Arranz</li>
+              <li>Patricija Džiużaité</li>
+              <li>Matiss Diminš</li>
+              <li>Eli Lee</li>
+              <li>Cas Ouderdorp</li>
+              <li>Jeremi Pilch</li>
+              <li>Alex Bazba</li>
+              <li>David Wünsch</li>
+          </ul>
+        </div>
+      </div>
+  </div>
+
+  <div>
+    <h3>Multiprocessor Scheduling</h3><br>
+
+    <div>
+      <h4>What is Multiprocessor Scheduling?</h4>
+      <p>Multiprocessor Scheduling is a system with multiple CPUs that run in parallel, often using multithreading.</p>
+    </div>
+
+    <div>
+      <h4>Problems that Arise</h4>
+      <p>Some main issues that arise in Multiprocessor Scheduling are Cache Affinity, Cache Coherence, and Load Imbalance.</p>
+      <p>Cache Affinity is when the processor cache has accumulated some amount of the process state, i.e., data or instructions. Cache affinity is exploited by OS schedulers: they tend to reschedule processes to run on a recently used processor. </p>
+      <p>Cache Coherence is when shared data resources end up stored in multiple CPU caches. When CPUs in a multiprocessing system maintain caches of a common memory resource, problems may arise with incoherent data.</p>
+      <p>Load Imbalance is when one queue finishes faster then other therefore, the load of CPUs is imbalanced. A quick way to solve this issue is through Job Migration.</p>
+    </div>
+
+    <div>
+      <h4>SQMS vs MQMS</h4>
+      <p>SQMS reuses basic framework for single CPU scheduling by using a single queue for all the jobs. It has the pro of simplicity, and just needs to adapt its existing policy to work on mulitple CPUs. 
+        However, it has cons of scalability due to locking the code, which reduces performance due to the system spending more time on lock overhead.
+        It also has a con of cache affinity because jobs bounce from CPU to CPU</p>
+      <p>Each job runs for a time slice, and then another job is chosen.SQMS has affintiy mechanisms to make process more likely to continue on the same CPU. However the scheduler may move other jobs around to balance the load</p>
+      <p>This is known as affinity fairness, migrating different jobs once at a time. </p>
+
+      <p>MQMS is when jobs are divided in multiple queues with paricular scheduling discipline, ie one per CPU. Some advantages include: 
+        scalability, no lock and cache contention issues.</p>
+      <p>However, it has the disadvantage of load imbalance. The solution to this problem is to migrate a job from one CPU to another with work stealing.
+        A source queue peks at another target queue to see how full it is, if target queue more full than source queue then the soruce steals one or more jobs from the target queue to balance the load </p>
+    </div>
+
+    <div>
+      <h4>Matrix Multiplication and Deadlock Programs</h4>
+      <p>mini programs to be added</p>
+    </div>
+
+  </div>
+</body>
+</html>
