@@ -57,6 +57,8 @@ class Matrix
         //Matrix-Multiplication Method multi threaded
         Matrix* matrixmultiplicationMultiThreaded(Matrix matrixB);
 
+        Matrix* matrixmultiplicationMultiThreadedScheduler(Matrix matrixB, int scheduler, bool randPriority);
+
 
 };
 

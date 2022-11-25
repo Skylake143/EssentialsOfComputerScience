@@ -226,10 +226,64 @@ Matrix* Matrix::matrixmultiplicationMultiThreaded(Matrix matrixB)
     return &output;
 }
 
+//Matrix-Multiplication Method single threaded
+Matrix* Matrix::matrixmultiplicationMultiThreadedScheduler(Matrix matrixB, int scheduler, bool randPriority)
+{
+    if(this->dimX != matrixB.dimY)
+    {
+        cout << "X-Dimension of Matrix A must be equal to Y-Dimentsion of Matrix B" << endl;
+        return nullptr;
+    }
+    //Define new output Matrix
+    Matrix output;
+    output.dimX = matrixB.dimX;
+    output.dimY = dimY;
+    output.matrix = new int32_t * [output.dimY];
+
+    pthread_t threadArr[output.dimY];
+    struct thread_data thread_data_array[output.dimY];
+
+    //Iteration through lines of new matrix
+    for(size_t y=0;y<output.dimY;++y)
+    {
+        output.matrix[y] = new int32_t[output.dimX];
+    }
+    //Iteration through lines of new matrix
+    for(size_t y=0;y<output.dimY;++y)
+    {
+        thread_data_array[y].matrixB = &matrixB;
+        thread_data_array[y].matrix = matrix;
+        thread_data_array[y].output = &output;
+        thread_data_array[y].y = y;
+        thread_data_array[y].dimX = dimX;
+
+        //Set scheduler
+        sched_param schedparam;
+        if(randPriority == true)schedparam.sched_priority = std::rand() %10;
+        
+        pthread_attr_t attr;
+        pthread_attr_init(&attr);
+        pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
+        pthread_attr_setschedpolicy(&attr, SCHED_RR);
+        pthread_attr_setschedparam(&attr, &schedparam);
+
+        int rc = pthread_create(&threadArr[y], &attr,threadMatrixCalculation,(void *)&thread_data_array[y]);
+        pthread_attr_destroy(&attr);
+        //TODO: int rc
+    }
+    for(size_t y=0;y<output.dimY;++y)
+    {
+        pthread_join(threadArr[y], NULL);
+    }
+    //pthread_exit(NULL);
+    
+    return &output;
+}
+
 int main()
 {
     //Initialize matrixA
-    Matrix matrixA(1000,1000);
+    Matrix matrixA(1500,1500);
     if(PRINT_MATRICES==true)
     {
         cout << "Matrix A: " << endl;
@@ -237,26 +291,38 @@ int main()
     }
     
     //Initialize matrix B
-    Matrix matrixB(1000,1000);
+    Matrix matrixB(1500,1500);
     if(PRINT_MATRICES==true)
     {
         cout << "Matrix B: " << endl;
         matrixB.printMatrix();
     }
 
+    // auto startTime = chrono::high_resolution_clock::now();
+    // Matrix output = *matrixA.matrixmultiplicationSingleThreaded(matrixB);
+    // auto stopTime = chrono::high_resolution_clock::now();
+    // auto duration = duration_cast<milliseconds>(stopTime - startTime);
+    // if(PRINT_MATRICES==true)
+    // {
+    //     cout << "Matrix A times B: " << endl;
+    //     output.printMatrix();
+    // }
+    // cout << "Duration to perform single-threaded Matrix multiplication in ms: " << duration.count() << endl;
+
     auto startTime = chrono::high_resolution_clock::now();
-    Matrix output = *matrixA.matrixmultiplicationSingleThreaded(matrixB);
+    Matrix output2 = *matrixA.matrixmultiplicationMultiThreaded(matrixB);
     auto stopTime = chrono::high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(stopTime - startTime);
     if(PRINT_MATRICES==true)
     {
         cout << "Matrix A times B: " << endl;
-        output.printMatrix();
+        output2.printMatrix();
     }
-    cout << "Duration to perform single-threaded Matrix multiplication in ms: " << duration.count() << endl;
+    cout << "Duration to perform multi-threaded Matrix multiplication in ms: " << duration.count() << endl;
 
+    //Round Robin scheduler
     startTime = chrono::high_resolution_clock::now();
-    Matrix output2 = *matrixA.matrixmultiplicationMultiThreaded(matrixB);
+    Matrix output3 = *matrixA.matrixmultiplicationMultiThreadedScheduler(matrixB, SCHED_RR, false);
     stopTime = chrono::high_resolution_clock::now();
     duration = duration_cast<milliseconds>(stopTime - startTime);
     if(PRINT_MATRICES==true)
@@ -264,7 +330,44 @@ int main()
         cout << "Matrix A times B: " << endl;
         output2.printMatrix();
     }
-    cout << "Duration to perform multi-threaded Matrix multiplication in ms: " << duration.count() << endl;
+    cout << "Duration to perform multi-threaded Matrix multiplication with Round Robin Scheduler in ms: " << duration.count() << endl;
+
+    //FIFO Scheduler - First in first out
+    startTime = chrono::high_resolution_clock::now();
+    Matrix output4 = *matrixA.matrixmultiplicationMultiThreadedScheduler(matrixB, SCHED_FIFO, false);
+    stopTime = chrono::high_resolution_clock::now();
+    duration = duration_cast<milliseconds>(stopTime - startTime);
+    if(PRINT_MATRICES==true)
+    {
+        cout << "Matrix A times B: " << endl;
+        output2.printMatrix();
+    }
+    cout << "Duration to perform multi-threaded Matrix multiplication with FirstInFirstOut Scheduler in ms: " << duration.count() << endl;
+
+//Round Robin scheduler
+    startTime = chrono::high_resolution_clock::now();
+    Matrix output5 = *matrixA.matrixmultiplicationMultiThreadedScheduler(matrixB, SCHED_RR, true);
+    stopTime = chrono::high_resolution_clock::now();
+    duration = duration_cast<milliseconds>(stopTime - startTime);
+    if(PRINT_MATRICES==true)
+    {
+        cout << "Matrix A times B: " << endl;
+        output2.printMatrix();
+    }
+    cout << "Duration to perform multi-threaded Matrix multiplication with Round Robin Scheduler and random priority in ms: " << duration.count() << endl;
+
+    //FIFO Scheduler - First in first out
+    startTime = chrono::high_resolution_clock::now();
+    Matrix output6 = *matrixA.matrixmultiplicationMultiThreadedScheduler(matrixB, SCHED_FIFO, true);
+    stopTime = chrono::high_resolution_clock::now();
+    duration = duration_cast<milliseconds>(stopTime - startTime);
+    if(PRINT_MATRICES==true)
+    {
+        cout << "Matrix A times B: " << endl;
+        output2.printMatrix();
+    }
+    cout << "Duration to perform multi-threaded Matrix multiplication with FirstInFirstOut Scheduler  and random priority in ms: " << duration.count() << endl;
+
 
     return 0;
 }
