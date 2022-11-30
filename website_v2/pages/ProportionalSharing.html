@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CPU Virtualization</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<!-- Side Navigation -->
+<nav class="w3-sidebar w3-bar-block w3-card w3-animate-left w3-center" style="display:none" id="mySidebar">
+  <h1 class="w3-xxxlarge w3-text-theme">Side Navigation</h1>
+  <button class="w3-bar-item w3-button" onclick="w3_close()">Close <i class="fa fa-remove"></i></button>
+  <a href="file:///Users/emmanouela/Desktop/website/index.html" class="w3-bar-item w3-button">Home</a>
+  <a href="MLFQ.html" class="w3-bar-item w3-button">MLFQ</a>
+  <a href="ProportionalSharing.html" class="w3-bar-item w3-button">Proportional Sharing</a>
+  <a href="MultiprocessorScheduling.html" class="w3-bar-item w3-button">Multiprocessor Scheduling</a>
+</nav>
+
+<!-- Header -->
+<header class="w3-container w3-theme w3-padding" id="myHeader">
+    <i onclick="w3_open()" class="fa fa-bars w3-xlarge w3-button w3-theme"></i> 
+    <div class="w3-center">
+    <h4><a href="file:///Users/emmanouela/Desktop/website/index.html"> Home</a></h4>
+    <h1 class="w3-xxxlarge w3-animate-bottom">CPU Virtualization</h1>
+      <div class="w3-padding-32">
+        <button class="w3-btn w3-xlarge w3-dark-grey w3-hover-light-grey" onclick="document.getElementById('id01').style.display='block'" style="font-weight:900;">GROUP INFO</button>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Modal -->
+  <div id="id01" class="w3-modal">
+      <div class="w3-modal-content w3-card-4 w3-animate-top">
+        <header class="w3-container w3-theme-l1"> 
+          <span onclick="document.getElementById('id01').style.display='none'"
+          class="w3-button w3-display-topright">×</span>
+          <h4>Welcome to our website</h4>
+          <h5>This is Group 39 and we aim to teach you a bit about the different aspects of CPU Virtualization</h5>
+        </header>
+        <div class="w3-padding">
+          <p>Team Members</p>
+          <ul>
+              <li>Emmanouela Stranomiti</li>
+              <li>Mariñe Hernaez Arranz</li>
+              <li>Patricija Džiużaité</li>
+              <li>Matiss Diminš</li>
+              <li>Eli Lee</li>
+              <li>Cas Ouderdorp</li>
+              <li>Jeremi Pilch</li>
+              <li>Alex Bazba</li>
+              <li>David Wünsch</li>
+          </ul>
+        </div>
+      </div>
+  </div>
+  
+  <header class="w3-container w3-blue-grey">
+    <h2>Proportional Sharing</h2>
+  </header>
+  
+  <div class="w3-padding w3-white w3-display-container">
+    <span onclick="this.parentElement.style.display='none'" class="w3-button w3-display-topright"><i class="fa fa-remove"></i></span>
+    <h2>What is it? Approaches, and Concepts</h2>
+
+    <p> The basic concept is tickets representing your share and that
+      processes are scheduled in a random manner. Tickets are used to represent the share of a resource that a process should receive.
+      Every process has some tickets and a scheduler picks a random ticket. The process having that ticket is the winner and is therefore executed. Then another ticket is picked by the scheduler.
+      A process that has a higher number of tickets has a greater chance of getting chosen for execution. For example, 
+        let’s say we have two processes A and B having 60 and 40 tickets respectively out of total 100 tickets. CPU share of A is 60% and that of B is 40%.
+        Scheduler picks a random number from 1 to 100. If the picked no. is from 1 to 60 then A is executed otherwise B is executed.</p>
+
+    <p>Ticket Mechanisms are used with Ticket Currency
+      For example, assume users A and B have each been given 100 tickets.
+      User A is running two jobs, A1 and A2, and gives them each 500 tickets (out of 1000 total) in A’s currency.
+      User B is running only 1 job and gives it 10 tickets (out of 10 total).
+      The system converts A1’s and A2’s allocation from 500 each in A’s currency to 50 each in the global currency;
+      similarly, B1’s 10 tickets is converted to 100 tickets. The lottery is then held over the global ticket currency (200 total) to determine which job runs. </p> 
+
+    <p>Probably the most amazing thing about lottery scheduling is the simplicity of its implementation.
+       All you need is a good random number generator to pick the winning ticket, a data structure to track the processes of the system (e.g., a list), and the total number of tickets.
+       An Example: Two jobs, each 100 tickets, competing with one another, </p>
+
+       <ul>
+       <li>R - run time</li> 
+  
+        <li>U - unfairness metric (time it takes for job 1 to complete divided by time it takes for job 2)</li>
+
+       </ul>
+       
+  
+ <p> We aim for the unfairness metric value to be equal to 1 (both jobs complete in the same amount of time).
+  An important thing to note is that over short periods of run time the unfairness metric tends to severely differ from 1,
+  so to reach the desired fairness, the run time needs to be extended</p>
+
+  <p>The ticket-assignment problem, (how tickets should be assigned to specific jobs) is a question with no general answer.
+    One approach is to give the control to distribute tickets directly to the user for he is the one that SHOULD know how to divide them best.
+    However there is no optimal answer to this problem as it’s dependent on the specifics of the tasks.</p>
+
+  <p> <strong> Randomness</strong> poses the risk of unfair scheduling over short periods of time. For this a <strong> Deterministic</strong> approach is preferred.
+      Stride scheduling - we take an inverse of the assigned ticket value (f.e. a large number divided by each job’s amount of tickets, or sum of the tickets diveded by individual job’s tickets) and call it a stride of each process.
+      For each time a job runs, its pass value (being its countermeasure, equal to the value of stride) is increased.
+      The job with the smallest value of pass value is the one to run next.
+      However, it is not suitable for newly added jobs as their pass value is unclear.</p>
+
+      <p>The Linux Completely Fair Scheduler (CFS) is used to achieve the CPU’s maximum efficiency, meaning that ideally all processes should get (100/N)% CPU time.
+        This ensures that no time should be wasted on switching processes.
+        CFS is different from other schedulers. Other schedulers operate their processes on fixed time,
+        while CFS divides all the processes through a counting based technique known as runtime.
+        CFS’s use of data structures like Red-Black binary trees, allow it to very efficient in switching processes.
+        CFS will pick a process with the least vruntime every scheduling decision.
+        This makes this scheduler more fair compared to other schedulers.</p>
+
+  </div>
+
+  <header class="w3-container w3-blue-grey">
+    <h4>Matrix Multiplication and Deadlock Programs</h4>
+      <p>mini programs to be added</p>
+  </header>
+  </div>
+
+  <script>
+    // Side navigation
+    function w3_open() {
+      var x = document.getElementById("mySidebar");
+      x.style.width = "100%";
+      x.style.fontSize = "40px";
+      x.style.paddingTop = "10%";
+      x.style.display = "block";
+    }
+    function w3_close() {
+      document.getElementById("mySidebar").style.display = "none";
+    }
+  </script>
+</body>
+</html>
