@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <chrono>
 #include "pthread.h"
+#include "assert.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -161,13 +162,13 @@ void* threadMatrixCalculation(void *threadarg)
     struct thread_data *my_data;
     my_data = (struct thread_data *) threadarg;
     int32_t** matrix = my_data->matrix;
-    Matrix matrixB = *my_data->matrixB;
-    Matrix output = *my_data->output;
+    Matrix* matrixB = my_data->matrixB;
+    Matrix* output = my_data->output;
     size_t y = my_data->y;
     uint32_t dimX = my_data->dimX;
 
     //Iteration through columns of new matrix
-    for(size_t matX=0; matX<output.dimX;++matX)
+    for(size_t matX=0; matX<output->dimX;++matX)
     {
         //calculating Matrix result
         int32_t result = 0;
@@ -175,12 +176,14 @@ void* threadMatrixCalculation(void *threadarg)
         for(size_t x=0; x<dimX;x++)
         {
             int32_t test1 = matrix[y][x];
-            int32_t test2 = matrixB.matrix[x][matX];
-            int32_t multipliedValue=matrix[y][x]*matrixB.matrix[x][matX];
+            int32_t test2 = matrixB->matrix[x][matX];
+            int32_t multipliedValue=matrix[y][x]*matrixB->matrix[x][matX];
             result+=multipliedValue;
         }
-        output.matrix[y][matX] = result;
+        output->matrix[y][matX] = result;
     }
+
+    return NULL;
 }
 
 //Matrix-Multiplication Method single threaded
@@ -199,6 +202,7 @@ Matrix Matrix::matrixmultiplicationMultiThreaded(Matrix matrixB)
 
     pthread_t threadArr[output.dimY];
     struct thread_data thread_data_array[output.dimY];
+    int result_code;
 
     //Iteration through lines of new matrix
     for(size_t y=0;y<output.dimY;++y)
@@ -214,14 +218,14 @@ Matrix Matrix::matrixmultiplicationMultiThreaded(Matrix matrixB)
         thread_data_array[y].y = y;
         thread_data_array[y].dimX = dimX;
 
-        int rc = pthread_create(&threadArr[y], NULL,threadMatrixCalculation,(void *)&thread_data_array[y]);
-        //TODO: int rc
+        result_code = pthread_create(&threadArr[y], NULL,threadMatrixCalculation,(void *)&thread_data_array[y]);
+        assert(!result_code);
     }
     for(size_t y=0;y<output.dimY;++y)
     {
-        pthread_join(threadArr[y], NULL);
+        result_code = pthread_join(threadArr[y], NULL);
+        assert(!result_code);
     }
-    //pthread_exit(NULL);
     
     return output;
 }
