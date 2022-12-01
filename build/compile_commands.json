@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/Users/davidwunsch/Documents/VisualStudioCode/UniverstiyLeidenGithub/EssentialsOfComputerScience/build",
+  "command": "/usr/bin/clang++   -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk -o CMakeFiles/MatrixMultiplicator.dir/Matrix.cpp.o -c /Users/davidwunsch/Documents/VisualStudioCode/UniverstiyLeidenGithub/EssentialsOfComputerScience/cmakeQuickStart/Matrix.cpp",
+  "file": "/Users/davidwunsch/Documents/VisualStudioCode/UniverstiyLeidenGithub/EssentialsOfComputerScience/cmakeQuickStart/Matrix.cpp"
+}
+]
