@@ -98,14 +98,14 @@ void Matrix::increasingFillMatrix(uint32_t dimX, uint32_t dimY)
 
 
 //Matrix-Multiplication Method single threaded
-Matrix* Matrix::matrixmultiplicationSingleThreaded(Matrix matrixB)
+Matrix Matrix::matrixmultiplicationSingleThreaded(Matrix matrixB)
 {   
     try
     {
         if(this->dimX != matrixB.dimY)
         {
             cout << "X-Dimension of Matrix A must be equal to Y-Dimentsion of Matrix B" << endl;
-            return nullptr;
+            exit(1);
             //TODO: does not work??
             throw runtime_error("X-Dimension of Matrix A must be equal to Y-Dimentsion of Matrix B");
         }
@@ -137,14 +137,14 @@ Matrix* Matrix::matrixmultiplicationSingleThreaded(Matrix matrixB)
             }
         }
         
-        return &output;
+        return output;
     }
 
     catch(runtime_error e)
     {
         cout << "Runtime error: " << e.what();
     }
-    return nullptr;
+    exit(1);
 }
 
 struct thread_data{
@@ -184,12 +184,12 @@ void* threadMatrixCalculation(void *threadarg)
 }
 
 //Matrix-Multiplication Method single threaded
-Matrix* Matrix::matrixmultiplicationMultiThreaded(Matrix matrixB)
+Matrix Matrix::matrixmultiplicationMultiThreaded(Matrix matrixB)
 {
     if(this->dimX != matrixB.dimY)
     {
         cout << "X-Dimension of Matrix A must be equal to Y-Dimentsion of Matrix B" << endl;
-        return nullptr;
+        exit(1);
     }
     //Define new output Matrix
     Matrix output;
@@ -223,16 +223,16 @@ Matrix* Matrix::matrixmultiplicationMultiThreaded(Matrix matrixB)
     }
     //pthread_exit(NULL);
     
-    return &output;
+    return output;
 }
 
 //Matrix-Multiplication Method single threaded
-Matrix* Matrix::matrixmultiplicationMultiThreadedScheduler(Matrix matrixB, int scheduler, bool randPriority)
+Matrix Matrix::matrixmultiplicationMultiThreadedScheduler(Matrix matrixB, int scheduler, bool randPriority)
 {
     if(this->dimX != matrixB.dimY)
     {
         cout << "X-Dimension of Matrix A must be equal to Y-Dimentsion of Matrix B" << endl;
-        return nullptr;
+        exit(1);
     }
     //Define new output Matrix
     Matrix output;
@@ -277,7 +277,7 @@ Matrix* Matrix::matrixmultiplicationMultiThreadedScheduler(Matrix matrixB, int s
     }
     //pthread_exit(NULL);
     
-    return &output;
+    return output;
 }
 
 int main()
@@ -299,7 +299,7 @@ int main()
     }
 
     auto startTime = chrono::high_resolution_clock::now();
-    Matrix output = *matrixA.matrixmultiplicationSingleThreaded(matrixB);
+    Matrix output = matrixA.matrixmultiplicationSingleThreaded(matrixB);
     auto stopTime = chrono::high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(stopTime - startTime);
     if(PRINT_MATRICES==true)
@@ -310,7 +310,7 @@ int main()
     cout << "Duration to perform single-threaded Matrix multiplication in ms: " << duration.count() << endl;
 
     startTime = chrono::high_resolution_clock::now();
-    Matrix output2 = *matrixA.matrixmultiplicationMultiThreaded(matrixB);
+    Matrix output2 = matrixA.matrixmultiplicationMultiThreaded(matrixB);
     stopTime = chrono::high_resolution_clock::now();
     duration = duration_cast<milliseconds>(stopTime - startTime);
     if(PRINT_MATRICES==true)
@@ -322,7 +322,7 @@ int main()
 
     //Round Robin scheduler
     startTime = chrono::high_resolution_clock::now();
-    Matrix output3 = *matrixA.matrixmultiplicationMultiThreadedScheduler(matrixB, SCHED_RR, false);
+    Matrix output3 = matrixA.matrixmultiplicationMultiThreadedScheduler(matrixB, SCHED_RR, false);
     stopTime = chrono::high_resolution_clock::now();
     duration = duration_cast<milliseconds>(stopTime - startTime);
     if(PRINT_MATRICES==true)
@@ -334,7 +334,7 @@ int main()
 
     //FIFO Scheduler - First in first out
     startTime = chrono::high_resolution_clock::now();
-    Matrix output4 = *matrixA.matrixmultiplicationMultiThreadedScheduler(matrixB, SCHED_FIFO, false);
+    Matrix output4 = matrixA.matrixmultiplicationMultiThreadedScheduler(matrixB, SCHED_FIFO, false);
     stopTime = chrono::high_resolution_clock::now();
     duration = duration_cast<milliseconds>(stopTime - startTime);
     if(PRINT_MATRICES==true)
@@ -346,7 +346,7 @@ int main()
 
 //Round Robin scheduler
     startTime = chrono::high_resolution_clock::now();
-    Matrix output5 = *matrixA.matrixmultiplicationMultiThreadedScheduler(matrixB, SCHED_RR, true);
+    Matrix output5 = matrixA.matrixmultiplicationMultiThreadedScheduler(matrixB, SCHED_RR, true);
     stopTime = chrono::high_resolution_clock::now();
     duration = duration_cast<milliseconds>(stopTime - startTime);
     if(PRINT_MATRICES==true)
@@ -358,7 +358,7 @@ int main()
 
     //FIFO Scheduler - First in first out
     startTime = chrono::high_resolution_clock::now();
-    Matrix output6 = *matrixA.matrixmultiplicationMultiThreadedScheduler(matrixB, SCHED_FIFO, true);
+    Matrix output6 = matrixA.matrixmultiplicationMultiThreadedScheduler(matrixB, SCHED_FIFO, true);
     stopTime = chrono::high_resolution_clock::now();
     duration = duration_cast<milliseconds>(stopTime - startTime);
     if(PRINT_MATRICES==true)

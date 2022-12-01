@@ -50,15 +50,15 @@ class Matrix
 
 
         //Matrix-Multiplication Method single threaded
-        Matrix* matrixmultiplicationSingleThreaded(Matrix matrixB);
+        Matrix matrixmultiplicationSingleThreaded(Matrix matrixB);
 
         //Thread function
         //void* threadMatrixCalculation(void *threadarg);
 
         //Matrix-Multiplication Method multi threaded
-        Matrix* matrixmultiplicationMultiThreaded(Matrix matrixB);
+        Matrix matrixmultiplicationMultiThreaded(Matrix matrixB);
 
-        Matrix* matrixmultiplicationMultiThreadedScheduler(Matrix matrixB, int scheduler, bool randPriority);
+        Matrix matrixmultiplicationMultiThreadedScheduler(Matrix matrixB, int scheduler, bool randPriority);
 
 
 };
