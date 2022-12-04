@@ -307,11 +307,13 @@ Matrix Matrix::matrixmultiplicationMultiThreadedScheduler(Matrix matrixB, int sc
 int main()
 {
     cout << "Do you want to calculate a quadratic Matrix multiplication: (yes/no)";
-    char input[]="";
+    char input[]={};
     cin >> input;
     string quadratic;
     for (int x=0; x<strlen(input); x++)
+    {
         quadratic.push_back(toupper(input[x]));
+    }
 
     int matSizeX=0;
     int matSizeY=0;
