@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CPU Virtualization</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<!-- Side Navigation -->
+<nav class="w3-sidebar w3-bar-block w3-card w3-animate-left w3-center" style="display:none" id="mySidebar">
+  <h1 class="w3-xxxlarge w3-text-theme">Side Navigation</h1>
+  <button class="w3-bar-item w3-button" onclick="w3_close()">Close <i class="fa fa-remove"></i></button>
+  <a href="file:///Users/emmanouela/Desktop/website/index.html" class="w3-bar-item w3-button">Home</a>
+  <a href="MLFQ.html" class="w3-bar-item w3-button">MLFQ</a>
+  <a href="ProportionalSharing.html" class="w3-bar-item w3-button">Proportional Sharing</a>
+  <a href="MultiprocessorScheduling.html" class="w3-bar-item w3-button">Multiprocessor Scheduling</a>
+</nav>
+
+<!-- Header -->
+<header class="w3-container w3-theme w3-padding" id="myHeader">
+    <i onclick="w3_open()" class="fa fa-bars w3-xlarge w3-button w3-theme"></i> 
+    <div class="w3-center">
+    <h4><a href="file:///Users/emmanouela/Desktop/website/index.html"> Home</a></h4>
+    <h1 class="w3-xxxlarge w3-animate-bottom">CPU Virtualization</h1>
+      <div class="w3-padding-32">
+        <button class="w3-btn w3-xlarge w3-dark-grey w3-hover-light-grey" onclick="document.getElementById('id01').style.display='block'" style="font-weight:900;">GROUP INFO</button>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Modal -->
+  <div id="id01" class="w3-modal">
+      <div class="w3-modal-content w3-card-4 w3-animate-top">
+        <header class="w3-container w3-theme-l1"> 
+          <span onclick="document.getElementById('id01').style.display='none'"
+          class="w3-button w3-display-topright">×</span>
+          <h4>Welcome to our website</h4>
+          <h5>This is Group 39 and we aim to teach you a bit about the different aspects of CPU Virtualization</h5>
+        </header>
+        <div class="w3-padding">
+          <p>Team Members</p>
+          <ul>
+              <li>Emmanouela Stranomiti</li>
+              <li>Mariñe Hernaez Arranz</li>
+              <li>Patricija Džiużaité</li>
+              <li>Matiss Diminš</li>
+              <li>Eli Lee</li>
+              <li>Cas Ouderdorp</li>
+              <li>Jeremi Pilch</li>
+              <li>Alex Bazba</li>
+              <li>David Wünsch</li>
+          </ul>
+        </div>
+      </div>
+  </div>
+ 
+  
+  <header class="w3-container w3-blue-grey">
+    <h2>Multiprocessor Scheduling</h2>
+  </header>
+  
+  <div class="w3-padding w3-white w3-display-container">
+    <span onclick="this.parentElement.style.display='none'" class="w3-button w3-display-topright"><i class="fa fa-remove"></i></span>
+    <h2>What is it? Approaches, and Problems</h2>
+    <p>Multiprocessor Scheduling is a system with multiple CPUs that run in parallel, often using multithreading.</p>
+    <p>Some main issues that arise in Multiprocessor Scheduling are Cache Affinity, Cache Coherence, and Load Imbalance.
+      Cache Affinity is when the processor cache has accumulated some amount of the process state, i.e., data or instructions. Cache affinity is exploited by OS schedulers: they tend to reschedule processes to run on a recently used processor. 
+      Cache Coherence is when shared data resources end up stored in multiple CPU caches. When CPUs in a multiprocessing system maintain caches of a common memory resource, problems may arise with incoherent data.
+      Load Imbalance is when one queue finishes faster then other therefore, the load of CPUs is imbalanced. A quick way to solve this issue is through Job Migration.</p>
+    <p>SQMS is an approach that reuses basic framework for single CPU scheduling by using a single queue for all the jobs. It has the pro of simplicity, and just needs to adapt its existing policy to work on mulitple CPUs. 
+      However, it has cons of scalability due to locking the code, which reduces performance due to the system spending more time on lock overhead.
+      It also has a con of cache affinity because jobs bounce from CPU to CPU.
+      Each job runs for a time slice, and then another job is chosen.SQMS has affintiy mechanisms to make process more likely to continue on the same CPU. However the scheduler may move other jobs around to balance the load.
+      This is known as affinity fairness, migrating different jobs once at a time. </p> 
+      <p>MQMS is another approach where jobs are divided in multiple queues with paricular scheduling discipline, ie one per CPU. Some advantages include: 
+      scalability, no lock and cache contention issues.
+      However, it has the disadvantage of load imbalance. The solution to this problem is to migrate a job from one CPU to another with work stealing.
+      A source queue peks at another target queue to see how full it is, if target queue more full than source queue then the soruce steals one or more jobs from the target queue to balance the load. </p>
+
+  </div>
+
+  <header class="w3-container w3-blue-grey">
+    <h4>Matrix Multiplication Program</h4>
+      <p> 
+        To demonstrate how to design a program using multiple CPUs, we created a Matrix Multiplication program. This was beneficial since in matrix multiplicaiton, the multiplication of every single line of the calculated matrix could be assigned to a thread. To actually benefit from using multiple CPUs we needed to use C++ instead of the previously learned Python, because Pythons implementation does not actually use real multiple CPUs. To use multiple CPUs and later on compare the runtime differences of single- and multithreading, we use the programming language C++ using the pthreads library. How to create threads using pthreads will be explained in the following chapter. First we will show the program and then we will go through the code and explain how to program a multithreaded program. 
+      </p>
+
+      <p> 
+        This window shows a replit of a Matrix Multiplication program. On clicking run it executes the shown command line command. It changes the directory and compiles and executes the program. The program asks to define the parameters, thus the size of the Matrix. We suggest putting in sizes between 100 and 1500 for the quadratic matrices to compare runtime differences of the different matrix programs.
+        <iframe frameborder="0" width="100%" height="500px" src="https://replit.com/@Skylake143/EssentialsOfComputerScience?embed=true"></iframe>
+        Unfortunatly, the replit online compiler has around the same runtime for the multithreaded matrix multiplication function than for the single matrix multiplication. In this one, the scheduler choice is set on automatic. This also works on my local machine and gives a faster runtime. Thus we assume that the standard scheduler does not work properly on the replit server. But one notices that the runtime for the manually set schedulers round robin and and first in first out result in way faster runtimes than the single-threaded Matrix multiplication. The single-threaded matrix multiplication results in a runtime of 4353 ms, whereas the round robin and first-in-first-out scheduler has a runtime between 147 and 245 ms. Thus the server must run on a CPU with between 18 and 30 cores, what is not uncommon for a server CPU. It is hard to have comparable results though, since the server is used by multiple people and it has different performances at different times. 
+      </p>
+      <p>
+        For this reason I will also present the results obtained with my local computer, which has 10 CPU cores. Since I do not have any background tasks open, this should be more representative. The following table shows the runtimes for the different schedulers for a quadratic matrix edge length size between 100 and 1500. 
+
+        <table>
+          <tr>
+            <th>Quadratic Matrix size</th>
+            <th>Single-Threaded Runtime</th> 
+            <th>Multi-Threaded</th>
+            <th>Round-Robin</th>
+            <th>First-In-First-Out</th>
+            <th>RR Random Priority</th>
+            <th>FIFO Random Priority</th>
+
+          </tr>
+          <tr>
+            <td>100</td>
+            <td>9 ms</td> 
+            <td>2 ms</td>
+            <td>3 ms</td>
+            <td>2 ms</td>
+            <td>4 ms</td>
+            <td>3 ms</td>
+          </tr>
+          <tr>
+            <td>500</td>
+            <td>480 ms</td> 
+            <td>39 ms</td>
+            <td>38 ms</td>
+            <td>38 ms</td>
+            <td>120 ms</td>
+            <td>134 ms</td>
+          </tr>
+          <tr>
+            <td>1000</td>
+            <td>3750 ms</td> 
+            <td>316 ms</td>
+            <td>316 ms</td>
+            <td>317 ms</td>
+            <td>957 ms</td>
+            <td>950 ms</td>
+          </tr>
+          <tr>
+            <td>1500</td>
+            <td>13309 ms</td> 
+            <td>1179 ms</td>
+            <td>1056 ms</td>
+            <td>1058 ms</td>
+            <td>3168 ms</td>
+            <td>3193 ms</td>
+          </tr>
+        </table>
+        The results show that the single-threaded matrix multiplication is the slowest for all matrix sizes. It stands out that the single-threaded matrix is only around 4.5 times faster for a matrix edge size of 100, whereas the difference are around the factor 12 for all other matrix sizes between 500 and 1500. Furthermore it the matrix multiplication with the manually chosen RR and FIFO scheduler takes around three times longer with randomized priority than with same priority for each thread.
+      </p>
+      <p>
+        In the last part we will go through the code snippets and explain how to program with pthreads. <br>
+        <ul>
+          <code>
+            auto startTime = chrono::high_resolution_clock::now();<br>
+            Matrix output = matrixA.matrixmultiplicationSingleThreaded(matrixB);<br>
+            auto stopTime = chrono::high_resolution_clock::now();<br>
+            auto duration = duration_cast<milliseconds>(stopTime - startTime);<br>
+          </code>
+        </ul>
+        We use the high resolution clock from the chrono library to measure the exact time needed to perform the matrix multiplication. The matrix multiplication methods multiply the matrix stored in the own class matrixA with the matrixB provided in the parameters. We execute this code for every five different matrix Multiplication parts. <br>
+        <ul>
+          <code>
+            //Iteration through lines of new matrix<br>
+            for(size_t y=0;y&lt;output.dimY;++y)<br>
+            {<br>
+                <ul>output.matrix[y] = new int32_t[output.dimX];<br>
+                //Iteration through columns of new matrix<br>
+                for(size_t matX=0; matX&lt;output.dimX;++matX)<br>
+                {<br><ul>
+                    //calculating Matrix result<br>
+                    int32_t result = 0;<br>
+                    //Iterating again through x to calculate <br>
+                    for(size_t x=0; x &lt; dimX;x++)<br>
+                    {<br>
+                        <ul>int32_t multipliedValue=matrix[y][x]*matrixB.matrix[x][matX];<br>
+                        result+=multipliedValue;<br></ul>
+                    }<br>
+                
+                    output.matrix[y][matX] = result;<br></ul>
+                }<br></ul>
+            }<br>
+          </code>
+        </ul>
+        This part shows the matrix multiplication algorithm of the single matrix multiplication algorithm. Two for loops iterate through the y and x-entries of the output array and calculate the result by iterating once more through the width of the second matrix. This code is also used in the method <code>void* threadMatrixCalculation(void *threadarg)
+        </code>, which is used for the threaded matrix multiplicaition algorithms. <br>
+        <code>
+          <ul>
+          //Create array of type pthread_t<br>
+          //Length of rows of the output array<br>
+          //Each row will be calculated by a own thread
+          pthread_t threadArr[output.dimY];<br>
+          //Create array of type struct thread_data to store data in
+          struct thread_data thread_data_array[output.dimY];<br>
+          //Set up variable for result_code
+          int result_code;<br>
+
+          //Iteration through lines of output array to initialize array<br>
+          for(size_t y=0;y&lt;output.dimY;++y)<br>
+          {<br><ul>
+
+              output.matrix[y] = new int32_t[output.dimX];<br>
+              </ul>
+          }
+          //Iteration through lines of new matrix<br>
+          for(size_t y=0;y&lt;output.dimY;++y)<br>
+          {<br><ul>
+              //Prepare thread_data with provided data for matrix multiplication<br>
+              thread_data_array[y].matrixB = &amp;<br>matrixB;<br>
+              thread_data_array[y].matrix = matrix;<br>
+              thread_data_array[y].output = &amp;output;<br>
+              thread_data_array[y].y = y;<br>
+              thread_data_array[y].dimX = dimX;<br>
+
+              //Create threads by passing pthread_t object of every entry in array, function and pointer on provided data<br>
+              result_code = pthread_create(&threadArr[y], NULL,threadMatrixCalculation,(void *)&thread_data_array[y]);<br>
+              //Check if pthread has been successful<br>
+              assert(!result_code);<br></ul>
+          }<br>
+          //Set all threads in the mode to wait for all threads until they finished before continuing with pthread_join()<br>
+          for(size_t y=0;y&lt;output.dimY;++y)<br>
+          {<br><ul>
+              result_code = pthread_join(threadArr[y], NULL);<br>
+              //Check again for success<br>
+              assert(!result_code);<br>
+              </ul>
+          }<br></ul>
+        </code>
+        First a array threadArr array is created which later stores the ids of the threads to assign them. Another array thread_data_array is created which stores thread_data structs. In the for loop iterating through the rows of the output matrix, the data needed for the thread alogrithm is stored in the thread_data_array structs. After preparing the data, the threads are created with the method pthread_create, which hands over the pointer to the threadArr, the function that the thread shall exectute and the pointer to the thread_data_array. The result code is checked to be 0, which indicates a successful creation. In the next for loop, the method pthread_join is called, what indicates that each thread should wait for the last one to calculate the results before ending the method. <br>
+        <code>
+          <ul>
+          //Set scheduling parameters
+          sched_param schedparam;<br>
+          //Set scheduling priority<br>
+          if(randPriority == true)schedparam.sched_priority = std::rand() %10;<br>
+          //Manually add p_thread_attr_t<br>
+          pthread_attr_t attr;<br>
+          pthread_attr_init(&attr);<br>
+
+          //Specify how thread scheduling attributes are defined<br>
+          //PTHREAD_EXPLICIT_SCHED specifies that new thread gets scheduling attribute defined in this attribute<br>
+          pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);<br>
+          //Set scheduling policy<br>
+          pthread_attr_setschedpolicy(&attr, SCHED_RR);<br>
+          //Link sched_param to pthread_attr_t<br>
+          pthread_attr_setschedparam(&attr, &schedparam);<br>
+          </ul>
+        </code>
+        The schedulers can be set easily by defining a pthread_attr_t, which can be assigned a PTHREAD_EXPLICIT_SCHED object. The scheduler is chosen with the <code>pthread_attr_setschedpolicy</code> method and assigning the proper parameter for it.<br>
+        This sums up the code needed to run a multithreaded program. Have fun with testing it out in the replit!
+        
+      </p>
+  </header>
+  </div>
+
+  
+  
+
+  <script>
+    // Side navigation
+    function w3_open() {
+      var x = document.getElementById("mySidebar");
+      x.style.width = "100%";
+      x.style.fontSize = "40px";
+      x.style.paddingTop = "10%";
+      x.style.display = "block";
+    }
+    function w3_close() {
+      document.getElementById("mySidebar").style.display = "none";
+    }
+  </script>
+</body>
+</html>

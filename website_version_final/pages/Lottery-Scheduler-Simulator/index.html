@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<!-- Setting the pages character encoding -->
+	<meta charset="UTF-8">
+
+	<!-- The meta viewport will scale my content to any device width -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Link to my stylesheet -->
+	<link rel="stylesheet" href="styles.css">
+	<title>Lottery Scheduler Simulator</title>
+</head>
+<body>
+	<h2>Lottery Scheduler Simulator</h2>
+	<p>Each box is a process, add and remove boxes for your number of processes. For each process any number of tickets can be assigned. The higher the ticket number, the higher the chance of the process being executed. The lottery wheel demostrates it in a simple way. <p>
+	<br>
+	<br>
+
+
+	<form action="" method="post" autocomplete="off">
+
+		<div class="field">
+			<input type="number" name="notes[]" min="1">
+			<span onclick="addField(this)">+</span>
+			<span onclick="removeField(this)">-</span>
+		</div>
+
+		<button type="submit" id='spin'>Spin!</button>
+		<button class="reset" onclick="location.reload()">Reset</button>
+
+	</form>
+	
+	<!-- <input type="button" value="spin" style="float:left;" id='spin' /> -->
+	<canvas id="canvas" width="500" height="500"></canvas>
+	<p id='canvas'>	Made by Alexander Bazba</p>
+	<br>
+	<br>
+<script src="roulette.js"></script>
+	<!-- <script src="script.js"></script>  -->
+</body>
+</html>

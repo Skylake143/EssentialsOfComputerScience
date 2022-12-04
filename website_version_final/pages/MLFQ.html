@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CPU Virtualization</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+<body>
+
+<!-- Side Navigation -->
+<nav class="w3-sidebar w3-bar-block w3-card w3-animate-left w3-center" style="display:none" id="mySidebar">
+  <h1 class="w3-xxxlarge w3-text-theme">Side Navigation</h1>
+  <button class="w3-bar-item w3-button" onclick="w3_close()">Close <i class="fa fa-remove"></i></button>
+  <a href="file:///Users/emmanouela/Desktop/website/index.html" class="w3-bar-item w3-button">Home</a>
+  <a href="MLFQ.html" class="w3-bar-item w3-button">MLFQ</a>
+  <a href="ProportionalSharing.html" class="w3-bar-item w3-button">Proportional Sharing</a>
+  <a href="MultiprocessorScheduling.html" class="w3-bar-item w3-button">Multiprocessor Scheduling</a>
+</nav>
+
+<!-- Header -->
+<header class="w3-container w3-theme w3-padding" id="myHeader">
+    <i onclick="w3_open()" class="fa fa-bars w3-xlarge w3-button w3-theme"></i> 
+    <div class="w3-center">
+    <h4><a href="file:///Users/emmanouela/Desktop/website/index.html"> Home</a></h4>
+    <h1 class="w3-xxxlarge w3-animate-bottom">CPU Virtualization</h1>
+      <div class="w3-padding-32">
+        <button class="w3-btn w3-xlarge w3-dark-grey w3-hover-light-grey" onclick="document.getElementById('id01').style.display='block'" style="font-weight:900;">GROUP INFO</button>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Modal -->
+  <div id="id01" class="w3-modal">
+      <div class="w3-modal-content w3-card-4 w3-animate-top">
+        <header class="w3-container w3-theme-l1"> 
+          <span onclick="document.getElementById('id01').style.display='none'"
+          class="w3-button w3-display-topright">×</span>
+          <h4>Welcome to our website</h4>
+          <h5>This is Group 39 and we aim to teach you a bit about the different aspects of CPU Virtualization</h5>
+        </header>
+        <div class="w3-padding">
+          <p>Team Members</p>
+          <ul>
+              <li>Emmanouela Stranomiti</li>
+              <li>Mariñe Hernaez Arranz</li>
+              <li>Patricija Džiużaité</li>
+              <li>Matiss Diminš</li>
+              <li>Eli Lee</li>
+              <li>Cas Ouderdorp</li>
+              <li>Jeremi Pilch</li>
+              <li>Alex Bazba</li>
+              <li>David Wünsch</li>
+          </ul>
+        </div>
+      </div>
+  </div>
+
+  <header class="w3-container w3-blue-grey">
+    <h2>Multilevel Feedback Queue</h2>
+  </header>
+  
+  <div class="w3-padding w3-white w3-display-container">
+    <span onclick="this.parentElement.style.display='none'" class="w3-button w3-display-topright"><i class="fa fa-remove"></i></span>
+    <h2>What is it? Approaches, and Rules</h2>
+    <p>A multilevel feedback queue is an approach to scheduling. It has multiple distinct queues and is
+      assigned to different priority levels. It uses priority to decide which job runs. </p>
+      <ol>
+        <li>It uses priorities to decide which job should run at a given time
+          a job with higher priority (i.e., a job on a higher queue) is chosen to run.
+          </li>
+
+          <li>
+            More than one job may be on a given queue (that have the same priority),
+            it uses round-robin scheduling among those jobs
+            to alternate time slices between jobs of the same priority.
+          </li>
+
+          <li>
+            It ensures that every job gets some CPU time, and allows MLFQ to determine the optimal priority of each job.
+          </li>
+
+          <li>
+            Each job is allotted an amount of time it can spend at the highest priority - the top of the queue.
+            It ensures that one job cannot stay at the highest priority forever, and helps free up the top queue for the highest priority processes, setting up for rule #5
+          </li>
+
+          <li>
+            After some time period, all the jobs are moved in the system to the top most queue.</li>
+
+      </ol>
+      <p> According to the 5 rules, time slices are used to execute a job. There are primarily 5 kinds of scheduling approaches: </p>
+        <ul>
+          <li>
+            First Come First Serve (FCFS)
+          </li>
+
+          <li>
+            Shortest-Job-First (SJF)
+          </li>
+
+          <li>
+            Shortest Remaining Time
+          </li>
+
+          <li>
+            Priority Scheduling
+          </li>
+
+          <li>
+            Round Robin
+          </li>
+
+
+        </ul>
+  </div>
+
+  <header class="w3-container w3-blue-grey">
+    <h4><a href="../pages/MLFQ_miniproject_MDimins/mlfqminiproject.html">Multi-Level Feedback simulation program</a></h4>
+  </header>
+  </div>
+
+  <script>
+    // Side navigation
+    function w3_open() {
+      var x = document.getElementById("mySidebar");
+      x.style.width = "100%";
+      x.style.fontSize = "40px";
+      x.style.paddingTop = "10%";
+      x.style.display = "block";
+    }
+    function w3_close() {
+      document.getElementById("mySidebar").style.display = "none";
+    }
+  </script>
+</body>
+</html>
+      
